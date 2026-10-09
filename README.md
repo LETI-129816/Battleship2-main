@@ -1,79 +1,151 @@
-# Engenharia de Software - ISCTE-IUL
+# ⚓ Battleship 2.0
 
-## Grupo 8: Cambaleigner
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Java Version](https://img.shields.io/badge/Java-17%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-### Membros
+> A modern take on the classic naval warfare game, designed for the XVII century setting with updated software engineering patterns.
 
-| Curso | Número | Nome |
-|---|---|---|
-| Engenharia de Telecomunicações e Informática | 129771 | Dinis Candeias |
-| Engenharia de Telecomunicações e Informática | 129779 | Bruno Quinteira |
-| Engenharia de Telecomunicações e Informática | 129802 | Tomás Faria |
-| Engenharia de Telecomunicações e Informática | 129816 | Tiago Baleizão |
+---
 
-  
-  
-  
-## Tipos de navios
+## 📖 Table of Contents
+- [Project Overview](#-project-overview)
+- [Key Features](#-key-features)
+- [Technical Stack](#-technical-stack)
+- [Installation & Setup](#-installation--setup)
+- [Code Architecture](#-code-architecture)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
 
-Na versão do jogo ambientada no tempo dos Descobrimentos, os navios utilizados correspondem aos navios tradicionais da Batalha Naval da seguinte forma:
+---
 
-| Batalha Naval |	Descobrimentos | English | Dimensão	| Nº de navios |
-|---|---|---|---|---|
-| Porta-aviões |	Galeão |	Galleon |	5	| 1 |
-| Navio de 4 canhões |	Fragata |	Frigate |	4 |	1 |
-| Navio de 3 canhões |	Nau |	Carrack |	3 |	2 |
-| Navio de 2 canhões |	Caravela |	Caravel |	2 |	3 |
-| Submarino |	Barca |	Barge	 | 1 | 4 |
+## 🎯 Project Overview
+This project serves as a template and reference for students learning **Object-Oriented Programming (OOP)** and **Software Quality**. It simulates a battleship environment where players must strategically place ships and sink the enemy fleet.
 
-### Galeão
+### 🎮 The Rules
+The game is played on a grid (typically 10x10). The coordinate system is defined as:
 
-O galeão corresponde ao porta-aviões da Batalha Naval tradicional e ocupa 5 posições na grelha.
+$$(x, y) \in \{0, \dots, 9\} \times \{0, \dots, 9\}$$
 
-### Fragata
+Hits are calculated based on the intersection of the shot vector and the ship's bounding box.
 
-A fragata corresponde ao navio de 4 canhões e ocupa 4 posições na grelha.
+---
 
-### Nau
+## ✨ Key Features
+| Feature | Description | Status |
+| :--- | :--- | :---: |
+| **Grid System** | Flexible $N \times N$ board generation. | ✅ |
+| **Ship Varieties** | Galleons, Frigates, and Brigantines (XVII Century theme). | ✅ |
+| **AI Opponent** | Heuristic-based targeting system. | 🚧 |
+| **Network Play** | Socket-based multiplayer. | ❌ |
 
-A nau corresponde ao navio de 3 canhões. Cada jogador dispõe de 2 naus, com cada uma a ocupar 3 posições.
+---
 
-### Caravela
+## 🛠 Technical Stack
+* **Language:** Java 17
+* **Build Tool:** Maven / Gradle
+* **Testing:** JUnit 5
+* **Logging:** Log4j2
 
-A caravela corresponde ao navio de 2 canhões. Cada jogador dispõe de 3 caravelas, ocupando cada uma 2 posições.
+---
 
-### Barca
+## 🚀 Installation & Setup
 
-A barca corresponde ao submarino da versão tradicional. Cada jogador dispõe de 4 barcas, ocupando cada uma 1 posição.
+### Prerequisites
+* JDK 17 or higher
+* Git
+
+### Step-by-Step
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/britoeabreu/Battleship2.git](https://github.com/britoeabreu/Battleship2.git)
+   ```
+2. **Navigate to directory:**
+   ```bash
+   cd Battleship2
+   ```
+3. **Compile and Run:**
+   ```bash
+   javac Main.java && java Main
+   ```
+
+---
+
+## 📚 Documentation
+
+You can access the generated Javadoc here:
+
+👉 [Battleship2 API Documentation](https://britoeabreu.github.io/Battleship2/)
 
 
+### Core Logic
+```java
+public class Ship {
+    private String name;
+    private int size;
+    private boolean isSunk;
 
-## Regras do jogo
+    // TODO: Implement damage logic
+    public void hit() {
+        // Implementation here
+    }
+}
+```
 
-Cada jogador começa por construir duas grelhas quadriculadas de 10 × 10: uma representa o seu próprio mar e outra representa o mar do adversário.
+### Design Patterns Used:
+- **Strategy Pattern:** For different AI difficulty levels.
+- **Observer Pattern:** To update the UI when a ship is hit.
+</details>
 
-Cada jogador deve posicionar os seus navios na sua grelha, podendo colocá-los na orientação horizontal ou vertical.
+### Logic Flow
+```mermaid
+graph TD
+    A[Start Game] --> B{Place Ships}
+    B --> C[Player Turn]
+    C --> D[Target Coordinate]
+    D --> E{Hit or Miss?}
+    E -- Hit --> F[Check if Sunk]
+    E -- Miss --> G[AI Turn]
+    F --> G
+    G --> C
+```
 
-Os navios:
+---
 
-- devem ser posicionados sem que o adversário os veja;
-- não podem tocar-se entre si;
-- podem estar encostados à borda da grelha;
-- têm de respeitar as dimensões e quantidades definidas para cada tipo de navio.
+## 🗺 Roadmap
+- [x] Basic grid implementation
+- [x] Ship placement validation
+- [ ] Add sound effects (SFX)
+- [ ] Implement "Fog of War" mechanic
+- [ ] **Multiplayer Integration** (High Priority)
 
-Depois de os navios serem posicionados, os jogadores jogam alternadamente.
+---
 
-Em cada turno, o jogador atira três tiros sobre a frota adversária, indicando para cada tiro as respetivas coordenadas de linha e coluna.
+## 🧪 Testing
+We use high-coverage unit testing to ensure game stability. Run tests using:
+```bash
+mvn test
+```
 
-O adversário deve indicar o resultado dos três tiros, nomeadamente:
+> [!TIP]
+> Use the `-Dtest=ClassName` flag to run specific test suites during development.
 
-- se algum tiro acertou num navio;
-- o tipo de navio atingido;
-- quais dos tiros atingiram água;
-- quais os navios que foram afundados.
+---
 
-Cada jogador deve registar na grelha do adversário os resultados dos seus tiros e identificar os navios que já foram afundados.
+## 🤝 Contributing
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create.
 
-### Objetivo
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a **Pull Request**
 
-Ganha o jogo o primeiro jogador a conseguir atingir todos os navios da frota adversária.
+---
+
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+**Maintained by:** [@britoeabreu](https://github.com/britoeabreu)  
+*Created for the Software Engineering students at ISCTE-IUL.*
