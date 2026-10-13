@@ -88,6 +88,8 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							int naviosAfundados = Fleet.FLEET_SIZE;
+							PDFGenerator.criarRelatorioBatalha(99, naviosAfundados);
 							System.exit(0);
 						}
 					}
@@ -107,6 +109,8 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							int naviosAfundados = Fleet.FLEET_SIZE;
+							PDFGenerator.criarRelatorioBatalha(99, naviosAfundados);
 							System.exit(0);
 						}
 					}
