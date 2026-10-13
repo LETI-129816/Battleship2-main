@@ -81,7 +81,7 @@ public class BoardView  extends JFrame {
             view.setVisible(true);
         });
     }
-
+ //
     public static void main(String[] args){
         showBoard();
     }
