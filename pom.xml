@@ -133,6 +133,12 @@
 			<version>${jetbrains.annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- Cronómetro para medir o tempo de preparação de cada jogada -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.21.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

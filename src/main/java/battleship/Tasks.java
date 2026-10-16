@@ -5,6 +5,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * The type Tasks.
@@ -40,6 +41,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		StopWatch turnTimer = new StopWatch();
 		menuHelp();
 
 		System.out.print("> ");
@@ -52,11 +54,17 @@ public class Tasks {
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+					// Começa a contar quando a nova frota está pronta.
+					turnTimer.reset();
+					turnTimer.start();
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+					// Começa a contar quando a nova frota está pronta.
+					turnTimer.reset();
+					turnTimer.start();
 					break;
 				case STATUS:
 					if (myFleet != null)
@@ -68,14 +76,37 @@ public class Tasks {
 					break;
 				case RAJADA:
 					if (game != null) {
-						game.readEnemyFire(in);
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
+						try {
+							game.readEnemyFire(in);
 
-						if (game.getRemainingShips() == 0) {
-							game.over();
-							System.exit(0);
+							// Termina a medição apenas após uma rajada aceite.
+							turnTimer.stop();
+							double seconds = turnTimer.getDuration().toMillis() / 1000.0;
+							System.out.printf(
+									"Tempo de preparação da jogada: %.2f segundos.%n",
+									seconds
+							);
+
+							myFleet.printStatus();
+							game.printMyBoard(true, false);
+
+							if (game.getRemainingShips() == 0) {
+								game.over();
+								System.exit(0);
+							}
+
+							// Começa a medição da próxima jogada.
+							turnTimer.reset();
+							turnTimer.start();
+
+						} catch (IllegalArgumentException e) {
+							// Uma entrada incorreta não termina o jogo nem reinicia o tempo.
+							System.out.println("Rajada inválida: " + e.getMessage());
+							System.out.println("Usa, por exemplo: rajada A1 B2 C3");
 						}
+					} else {
+						System.out.println("Cria primeiro uma frota com gerafrota.");
+						in.nextLine();
 					}
 					break;
 				case SIMULA:
