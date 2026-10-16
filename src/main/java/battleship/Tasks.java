@@ -6,6 +6,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.apache.commons.lang3.time.StopWatch;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 /**
  * The type Tasks.
@@ -33,6 +44,9 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+
+	private static final String GUARDAR = "guardar";
+	private static final String CARREGAR = "carregar";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -75,40 +89,38 @@ public class Tasks {
 						game.printMyBoard(false, true);
 					break;
 				case RAJADA:
-					if (game != null) {
-						try {
-							game.readEnemyFire(in);
+    if (game != null) {
+        try {
+            game.readEnemyFire(in);
 
-							// Termina a medição apenas após uma rajada aceite.
-							turnTimer.stop();
-							double seconds = turnTimer.getDuration().toMillis() / 1000.0;
-							System.out.printf(
-									"Tempo de preparação da jogada: %.2f segundos.%n",
-									seconds
-							);
+            turnTimer.stop();
+            double seconds = turnTimer.getDuration().toMillis() / 1000.0;
+            System.out.printf(
+                    "Tempo de preparação da jogada: %.2f segundos.%n",
+                    seconds
+            );
 
-							myFleet.printStatus();
-							game.printMyBoard(true, false);
+            myFleet.printStatus();
+            game.printMyBoard(true, false);
 
-							if (game.getRemainingShips() == 0) {
-								game.over();
-								System.exit(0);
-							}
+            if (game.getRemainingShips() == 0) {
+                game.over();
+                int naviosAfundados = Fleet.FLEET_SIZE;
+                PDFGenerator.criarRelatorioBatalha(99, naviosAfundados);
+                System.exit(0);
+            }
 
-							// Começa a medição da próxima jogada.
-							turnTimer.reset();
-							turnTimer.start();
-
-						} catch (IllegalArgumentException e) {
-							// Uma entrada incorreta não termina o jogo nem reinicia o tempo.
-							System.out.println("Rajada inválida: " + e.getMessage());
-							System.out.println("Usa, por exemplo: rajada A1 B2 C3");
-						}
-					} else {
-						System.out.println("Cria primeiro uma frota com gerafrota.");
-						in.nextLine();
-					}
-					break;
+            turnTimer.reset();
+            turnTimer.start();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Rajada inválida: " + e.getMessage());
+            System.out.println("Usa, por exemplo: rajada A1 B2 C3");
+        }
+    } else {
+        System.out.println("Cria primeiro uma frota com gerafrota.");
+        in.nextLine();
+    }
+    break;
 				case SIMULA:
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
@@ -124,6 +136,8 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							int naviosAfundados = Fleet.FLEET_SIZE;
+							PDFGenerator.criarRelatorioBatalha(99, naviosAfundados);
 							System.exit(0);
 						}
 					}
@@ -131,6 +145,81 @@ public class Tasks {
 				case TIROS:
 					if (game != null)
 						game.printMyBoard(true, true);
+					break;
+				case GUARDAR:
+					if (game != null) {
+						System.out.print("Que nome quer dar a esta gravação? (ex: meu_jogo): ");
+						String nomeFicheiroGuardar = in.next() + ".json";
+
+						try (Writer writer = new FileWriter(nomeFicheiroGuardar)) {
+							Gson gson = new GsonBuilder()
+									.setPrettyPrinting()
+									// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
+									.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
+										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
+										json.addProperty("tipo_navio_exato", src.getClass().getName());
+										return json;
+									})
+									.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
+										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
+										json.addProperty("tipo_navio_exato", src.getClass().getName());
+										return json;
+									})
+									.create();
+
+							gson.toJson(game, writer);
+							System.out.println("✓ Jogo guardado com sucesso no ficheiro '" + nomeFicheiroGuardar + "'!");
+						} catch (IOException e) {
+							System.out.println("Erro ao guardar o jogo: " + e.getMessage());
+						}
+					} else {
+						System.out.println("Não existe nenhum jogo a decorrer. Use '" + GERAFROTA + "' primeiro.");
+					}
+					break;
+
+				case CARREGAR:
+					System.out.print("Qual é o nome do ficheiro que quer carregar? (sem o .json): ");
+					String nomeFicheiroCarregar = in.next() + ".json";
+
+					try (Reader reader = new FileReader(nomeFicheiroCarregar)) {
+						Gson gson = new GsonBuilder()
+								.registerTypeAdapter(IFleet.class, (JsonDeserializer<IFleet>) (json, type, context) -> context.deserialize(json, Fleet.class))
+								.registerTypeAdapter(IPosition.class, (JsonDeserializer<IPosition>) (json, type, context) -> context.deserialize(json, Position.class))
+								.registerTypeAdapter(IMove.class, (JsonDeserializer<IMove>) (json, type, context) -> context.deserialize(json, Move.class))
+								// Ensina o Gson a ler a "etiqueta" e a construir o navio exato (Barca, Galeão, etc.)
+								.registerTypeAdapter(Ship.class, (JsonDeserializer<Ship>) (json, type, context) -> {
+									try {
+										String className = json.getAsJsonObject().get("tipo_navio_exato").getAsString();
+										return context.deserialize(json, Class.forName(className));
+									} catch (Exception ex) {
+										throw new JsonParseException(ex);
+									}
+								})
+								.registerTypeAdapter(IShip.class, (JsonDeserializer<IShip>) (json, type, context) -> {
+									try {
+										String className = json.getAsJsonObject().get("tipo_navio_exato").getAsString();
+										return context.deserialize(json, Class.forName(className));
+									} catch (Exception ex) {
+										throw new JsonParseException(ex);
+									}
+								})
+								.create();
+
+						game = gson.fromJson(reader, Game.class);
+						myFleet = game.getMyFleet();
+						System.out.println("✓ Jogo '" + nomeFicheiroCarregar + "' carregado com sucesso!");
+
+						if (game != null) {
+    game.printMyBoard(true, true);
+    turnTimer.reset();
+    turnTimer.start();
+}
+					} catch (IOException e) {
+						System.out.println("Não foi possível carregar: Ficheiro '" + nomeFicheiroCarregar + "' não encontrado.");
+					} catch (Exception e) {
+						System.out.println("Ocorreu um erro ao reconstruir o jogo. O ficheiro pode estar corrompido.");
+						e.printStackTrace();
+					}
 					break;
                 case AJUDA:
                     menuHelp();
@@ -157,6 +246,10 @@ public class Tasks {
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+
+		System.out.println("- " + GUARDAR + ": Guarda a partida atual num ficheiro JSON.");
+		System.out.println("- " + CARREGAR + ": Carrega uma partida guardada a partir do ficheiro JSON.");
+
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
 	}
