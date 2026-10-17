@@ -11,7 +11,6 @@
 	<name>BattleshipGame</name>
 	<description>A Battleship Game player.</description>
 	<url>https://github.com/britoeabreu/Battleship2.git</url>
-////
 	<developers>
 	  <developer>
 		<id>mgoulao</id>
@@ -133,19 +132,27 @@
 			<version>${jetbrains.annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- Cronómetro para medir o tempo de preparação de cada jogada -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.21.0</version>
+		</dependency>
 
-		<!-- Source: https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<!-- Guardar e carregar partidas em JSON -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.14.0</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<!-- Gerar relatórios PDF -->
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>3.0.5</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
