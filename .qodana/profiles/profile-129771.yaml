@@ -1,7 +1,6 @@
 # 129771 - Dinis Candeias
-profile:
-  base:
-    name: empty
+name: "Large Class 129771"
+baseProfile: empty
 inspections:
   - inspection: MethodCount
     enabled: true
