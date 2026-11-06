@@ -324,7 +324,6 @@ public class Tasks {
 
 	public void metodoComCheiro(int p1, String p2) {
 		System.out.println("parameters:" + p1 + p2);
-
 	}
 
 }
