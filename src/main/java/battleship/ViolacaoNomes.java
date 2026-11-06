@@ -1,7 +1,7 @@
 package battleship;
 
 public class ViolacaoNomes {
-    public int Calcular_Pontos() {
+    public int calcularPontos() {
         return 0;
     }
 }
