@@ -7,3 +7,6 @@ inspections:
     severity: WARNING
     options:
       m_limit: 4
+  - inspection: UseOfSystemOutOrSystemErr
+    enabled: true
+    severity: WARNING
