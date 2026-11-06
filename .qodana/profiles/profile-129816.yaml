@@ -1,12 +1,10 @@
 # 129816 - Tiago Baleizão
-name: "Long Parameter List 129816"
-baseProfile: empty
-inspections:
-  - inspection: MethodWithTooManyParameters
-    enabled: true
-    severity: WARNING
-    options:
-      m_limit: 4
-  - inspection: UseOfSystemOutOrSystemErr
-    enabled: true
-    severity: WARNING
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: MethodWithTooManyParameters
+      enabled: true
+      severity: WARNING
+      options:
+        limit: 4
