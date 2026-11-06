@@ -323,7 +323,7 @@ public class Tasks {
 	}
 
 	public void metodoComCheiro(int p1, String p2, boolean p3, double p4, char p5, char p6, int p7) {
-		System.out.println(p1 + p2 + p3 + p4 + p5 + p6 + p7);
+		System.out.println("parameters:" + p1 + p2 + p3 + p4 + p5 + p6 + p7);
 	}
 
 }
