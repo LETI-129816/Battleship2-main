@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: JetBrains/qodana-action@v2026.2.2
+      - uses: JetBrains/qodana-action@v2026.2
         with:
           args: --config qodana-129816.yaml --profile .qodana/profiles/profile-129816.yaml
           use-annotations: true
