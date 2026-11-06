@@ -323,7 +323,6 @@ public class Tasks {
 	}
 
 	public void metodoComCheiro(int p1, String p2, boolean p3, double p4, char p5, char p6, int p7) {
-
 	}
 
 }
