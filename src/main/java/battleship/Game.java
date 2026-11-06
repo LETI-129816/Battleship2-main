@@ -452,4 +452,8 @@ public class Game implements IGame
 			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
 			System.out.println("+--------------------------------------------------------------+");
 	}
+
+	public void metodoComCheiro(int p1, String p2, boolean p3, double p4, char p5) {
+		System.out.println("Este método tem demasiados parâmetros e vai ser apanhado!");
+	}
 }
