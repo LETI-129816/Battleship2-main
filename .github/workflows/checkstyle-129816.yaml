@@ -16,3 +16,5 @@ jobs:
           reporter: github-pr-check
           checkstyle_config: checkstyle-129816.xml
           level: error
+
+#clear
