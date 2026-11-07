@@ -1,0 +1,18 @@
+# 129816 Tiago Baleizão
+name: Checkstyle naming gate 129816
+on:
+  pull_request:
+  push:
+    branches: [master]
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Checkstyle
+        uses: reviewdog/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check
+          checkstyle_config: checkstyle-129816.xml
+          level: error
