@@ -5,7 +5,7 @@ public class TesteCheckstyle {
         int p2 = p1;
     }
 
-    public void nadaSério() {
+    public void nadaSerio() {
         //nada
     }
 }
