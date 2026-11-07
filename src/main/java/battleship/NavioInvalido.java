@@ -1,10 +1,10 @@
 package battleship;
 
-public class navioInvalido {
+public class NavioInvalido {
 
     public static final boolean NAVIOINVALIDO = true;
 
-    public navioInvalido(boolean navio) {
+    public NavioInvalido(boolean navio) {
         navio = NAVIOINVALIDO;
     }
 }
