@@ -15,3 +15,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           checkstyle_config: checkstyle/checkstyle-129816.xml
           level: error
+          fail_level: error
