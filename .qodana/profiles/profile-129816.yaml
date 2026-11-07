@@ -2,7 +2,7 @@
 name: "Long Parameter List 129816"
 baseProfile: empty
 inspections:
-  - inspection: MethodWithTooManyParameters
+  - inspection: ParametersPerMethod
     enabled: true
     severity: WARNING
     options:
