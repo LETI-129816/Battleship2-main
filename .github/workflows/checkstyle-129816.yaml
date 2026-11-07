@@ -10,11 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Checkstyle
-        uses: reviewdog/action-checkstyle@v1
+        uses: dbelyaev/action-checkstyle@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-check
           checkstyle_config: checkstyle-129816.xml
-          level: error
-
-#clear
