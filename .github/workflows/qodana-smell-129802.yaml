@@ -25,8 +25,9 @@ jobs:
       - name: Analisar Feature Envy
         uses: JetBrains/qodana-action@v2026.2
         with:
-          args: --config,qodana-129802.yaml
+          args: "--config qodana-129802.yaml"
           pr-mode: false
           upload-result: true
+          use-caches: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
