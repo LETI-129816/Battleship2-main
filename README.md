@@ -149,3 +149,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 **Maintained by:** [@britoeabreu](https://github.com/britoeabreu)  
 *Created for the Software Engineering students at ISCTE-IUL.*
+
+## Workflow de testes unitários (GitHub Actions)
+
+Ficheiro: `.github/workflows/maven-tests-129771.yml`
+
+- Corre automaticamente em cada **push** e em cada **pull request** para `master`.
+- Usa Java 21 (Temurin) e executa `mvn -B test`, ou seja, toda a bateria de testes JUnit.
+- O resultado pode ser consultado no separador **Actions** ("Java with Maven (tests)").
+- Se falhar, o pull request não deve ser aceite até os testes passarem.
