@@ -115,36 +115,7 @@ public class Tasks {
 						game.printMyBoard(true, true);
 					break;
 				case GUARDAR:
-					if (game != null) {
-						System.out.print("Que nome quer dar a esta gravação? (ex: meu_jogo): ");
-						String nomeFicheiroGuardar = scanner.next() + ".json";
-
-						try (Writer writer = new FileWriter(nomeFicheiroGuardar)) {
-							Gson gson = new GsonBuilder()
-									.setPrettyPrinting()
-									// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
-									.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
-										Class<? extends Ship> classeDoNavio = src.getClass();
-										JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
-										json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
-										return json;
-									})
-									.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
-										Class<? extends IShip> classeDoNavio = src.getClass();
-										JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
-										json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
-										return json;
-									})
-									.create();
-
-							gson.toJson(game, writer);
-							System.out.println("✓ Jogo guardado com sucesso no ficheiro '" + nomeFicheiroGuardar + "'!");
-						} catch (IOException e) {
-							System.out.println("Erro ao guardar o jogo: " + e.getMessage());
-						}
-					} else {
-						System.out.println("Não existe nenhum jogo a decorrer. Use '" + GERAFROTA + "' primeiro.");
-					}
+					guardarJogo(game, scanner);
 					break;
 
 				case CARREGAR:
@@ -199,6 +170,39 @@ public class Tasks {
 			command = scanner.next();
 		}
 		System.out.println(GOODBYE_MESSAGE);
+	}
+
+	private static void guardarJogo(IGame game, Scanner scanner) {
+		if (game != null) {
+			System.out.print("Que nome quer dar a esta gravação? (ex: meu_jogo): ");
+			String nomeFicheiroGuardar = scanner.next() + ".json";
+
+			try (Writer writer = new FileWriter(nomeFicheiroGuardar)) {
+				Gson gson = new GsonBuilder()
+						.setPrettyPrinting()
+						// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
+						.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
+							Class<? extends Ship> classeDoNavio = src.getClass();
+							JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
+							json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
+							return json;
+						})
+						.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
+							Class<? extends IShip> classeDoNavio = src.getClass();
+							JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
+							json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
+							return json;
+						})
+						.create();
+
+				gson.toJson(game, writer);
+				System.out.println("✓ Jogo guardado com sucesso no ficheiro '" + nomeFicheiroGuardar + "'!");
+			} catch (IOException e) {
+				System.out.println("Erro ao guardar o jogo: " + e.getMessage());
+			}
+		} else {
+			System.out.println("Não existe nenhum jogo a decorrer. Use '" + GERAFROTA + "' primeiro.");
+		}
 	}
 
 	private static void terminarJogo(IGame game) {
