@@ -46,6 +46,7 @@ public class Tasks {
 
 	private static final String GUARDAR = "guardar";
 	private static final String CARREGAR = "carregar";
+	private static final String TIPO_NAVIO_EXATO = "tipo_navio_exato";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -124,12 +125,12 @@ public class Tasks {
 									// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
 									.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
 										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
-										json.addProperty("tipo_navio_exato", src.getClass().getName());
+										json.addProperty(TIPO_NAVIO_EXATO, src.getClass().getName());
 										return json;
 									})
 									.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
 										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
-										json.addProperty("tipo_navio_exato", src.getClass().getName());
+										json.addProperty(TIPO_NAVIO_EXATO, src.getClass().getName());
 										return json;
 									})
 									.create();
@@ -156,7 +157,7 @@ public class Tasks {
 								// Ensina o Gson a ler a "etiqueta" e a construir o navio exato (Barca, Galeão, etc.)
 								.registerTypeAdapter(Ship.class, (JsonDeserializer<Ship>) (json, type, context) -> {
 									try {
-										String className = json.getAsJsonObject().get("tipo_navio_exato").getAsString();
+										String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
 										return context.deserialize(json, Class.forName(className));
 									} catch (Exception ex) {
 										throw new JsonParseException(ex);
@@ -164,7 +165,7 @@ public class Tasks {
 								})
 								.registerTypeAdapter(IShip.class, (JsonDeserializer<IShip>) (json, type, context) -> {
 									try {
-										String className = json.getAsJsonObject().get("tipo_navio_exato").getAsString();
+										String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
 										return context.deserialize(json, Class.forName(className));
 									} catch (Exception ex) {
 										throw new JsonParseException(ex);
