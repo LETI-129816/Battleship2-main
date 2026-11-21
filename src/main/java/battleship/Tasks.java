@@ -87,9 +87,7 @@ public class Tasks {
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
-							game.over();
-                            PDFGenerator.criarRelatorioBatalha(99, Fleet.FLEET_SIZE);
-							System.exit(0);
+							terminarJogo(game);
 						}
 					}
 					break;
@@ -107,9 +105,7 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
-							game.over();
-                            PDFGenerator.criarRelatorioBatalha(99, Fleet.FLEET_SIZE);
-							System.exit(0);
+							terminarJogo(game);
 						}
 					}
 					break;
@@ -200,6 +196,12 @@ public class Tasks {
 			command = in.next();
 		}
 		System.out.println(GOODBYE_MESSAGE);
+	}
+
+	private static void terminarJogo(IGame game) {
+		game.over();
+		PDFGenerator.criarRelatorioBatalha(99, Fleet.FLEET_SIZE);
+		System.exit(0);
 	}
 
 	/**
