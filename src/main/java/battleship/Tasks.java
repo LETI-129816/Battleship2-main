@@ -124,13 +124,15 @@ public class Tasks {
 									.setPrettyPrinting()
 									// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
 									.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
-										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
-										json.addProperty(TIPO_NAVIO_EXATO, src.getClass().getName());
+										Class<? extends Ship> classeDoNavio = src.getClass();
+										JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
+										json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
 										return json;
 									})
 									.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
-										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
-										json.addProperty(TIPO_NAVIO_EXATO, src.getClass().getName());
+										Class<? extends IShip> classeDoNavio = src.getClass();
+										JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
+										json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
 										return json;
 									})
 									.create();
