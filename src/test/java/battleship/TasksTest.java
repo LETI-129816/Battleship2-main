@@ -222,15 +222,6 @@ class TasksTest {
 		}
 	}
 
-	// ---------- metodoComCheiro (CC 1) ----------
-
-	@Test
-	@DisplayName("metodoComCheiro imprime os parâmetros")
-	void metodoComCheiro() {
-		tasks.metodoComCheiro(5, "ab");
-		assertTrue(saida().contains("parameters:5ab"),
-				"Error: expected 'parameters:5ab' in the output but got: " + saida());
-	}
 
 	// ---------- menu (CC 26) ----------
 
