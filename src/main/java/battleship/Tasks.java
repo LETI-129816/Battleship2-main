@@ -58,8 +58,8 @@ public class Tasks {
 		menuHelp();
 
 		System.out.print("> ");
-		Scanner in = new Scanner(System.in);
-		String command = in.next();
+		Scanner scanner = new Scanner(System.in);
+		String command = scanner.next();
 		while (!command.equals(DESISTIR)) {
 
 			switch (command) {
@@ -69,7 +69,7 @@ public class Tasks {
 					game.printMyBoard(false, true);
 					break;
 				case LEFROTA:
-					myFleet = buildFleet(in);
+					myFleet = buildFleet(scanner);
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
 					break;
@@ -83,7 +83,7 @@ public class Tasks {
 					break;
 				case RAJADA:
 					if (game != null) {
-						game.readEnemyFire(in);
+						game.readEnemyFire(scanner);
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
@@ -117,7 +117,7 @@ public class Tasks {
 				case GUARDAR:
 					if (game != null) {
 						System.out.print("Que nome quer dar a esta gravação? (ex: meu_jogo): ");
-						String nomeFicheiroGuardar = in.next() + ".json";
+						String nomeFicheiroGuardar = scanner.next() + ".json";
 
 						try (Writer writer = new FileWriter(nomeFicheiroGuardar)) {
 							Gson gson = new GsonBuilder()
@@ -149,7 +149,7 @@ public class Tasks {
 
 				case CARREGAR:
 					System.out.print("Qual é o nome do ficheiro que quer carregar? (sem o .json): ");
-					String nomeFicheiroCarregar = in.next() + ".json";
+					String nomeFicheiroCarregar = scanner.next() + ".json";
 
 					try (Reader reader = new FileReader(nomeFicheiroCarregar)) {
 						Gson gson = new GsonBuilder()
@@ -196,7 +196,7 @@ public class Tasks {
 					System.out.println("Que comando é esse??? Repete ...");
 			}
 			System.out.print("> ");
-			command = in.next();
+			command = scanner.next();
 		}
 		System.out.println(GOODBYE_MESSAGE);
 	}
