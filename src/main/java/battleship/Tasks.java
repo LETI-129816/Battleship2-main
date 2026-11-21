@@ -123,28 +123,7 @@ public class Tasks {
 					String nomeFicheiroCarregar = scanner.next() + ".json";
 
 					try (Reader reader = new FileReader(nomeFicheiroCarregar)) {
-						Gson gson = new GsonBuilder()
-								.registerTypeAdapter(IFleet.class, (JsonDeserializer<IFleet>) (json, type, context) -> context.deserialize(json, Fleet.class))
-								.registerTypeAdapter(IPosition.class, (JsonDeserializer<IPosition>) (json, type, context) -> context.deserialize(json, Position.class))
-								.registerTypeAdapter(IMove.class, (JsonDeserializer<IMove>) (json, type, context) -> context.deserialize(json, Move.class))
-								// Ensina o Gson a ler a "etiqueta" e a construir o navio exato (Barca, Galeão, etc.)
-								.registerTypeAdapter(Ship.class, (JsonDeserializer<Ship>) (json, type, context) -> {
-									try {
-										String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
-										return context.deserialize(json, Class.forName(className));
-									} catch (Exception ex) {
-										throw new JsonParseException(ex);
-									}
-								})
-								.registerTypeAdapter(IShip.class, (JsonDeserializer<IShip>) (json, type, context) -> {
-									try {
-										String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
-										return context.deserialize(json, Class.forName(className));
-									} catch (Exception ex) {
-										throw new JsonParseException(ex);
-									}
-								})
-								.create();
+						Gson gson = criarGsonParaCarregar();
 
 						game = gson.fromJson(reader, Game.class);
 						myFleet = game.getMyFleet();
@@ -170,6 +149,32 @@ public class Tasks {
 			command = scanner.next();
 		}
 		System.out.println(GOODBYE_MESSAGE);
+	}
+
+	private static @NotNull Gson criarGsonParaCarregar() {
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(IFleet.class, (JsonDeserializer<IFleet>) (json, type, context) -> context.deserialize(json, Fleet.class))
+				.registerTypeAdapter(IPosition.class, (JsonDeserializer<IPosition>) (json, type, context) -> context.deserialize(json, Position.class))
+				.registerTypeAdapter(IMove.class, (JsonDeserializer<IMove>) (json, type, context) -> context.deserialize(json, Move.class))
+				// Ensina o Gson a ler a "etiqueta" e a construir o navio exato (Barca, Galeão, etc.)
+				.registerTypeAdapter(Ship.class, (JsonDeserializer<Ship>) (json, type, context) -> {
+					try {
+						String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
+						return context.deserialize(json, Class.forName(className));
+					} catch (Exception ex) {
+						throw new JsonParseException(ex);
+					}
+				})
+				.registerTypeAdapter(IShip.class, (JsonDeserializer<IShip>) (json, type, context) -> {
+					try {
+						String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
+						return context.deserialize(json, Class.forName(className));
+					} catch (Exception ex) {
+						throw new JsonParseException(ex);
+					}
+				})
+				.create();
+		return gson;
 	}
 
 	private static void guardarJogo(IGame game, Scanner scanner) {
