@@ -1,0 +1,8 @@
+# 129802 - Tomás Faria
+version: "1.0"
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: FeatureEnvy
+      enabled: true

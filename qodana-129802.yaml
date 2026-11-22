@@ -1,0 +1,9 @@
+# 129802 - Tomás Faria
+version: "1.0"
+linter: jetbrains/qodana-jvm:2026.2
+profile:
+  path: Qodana/Profiles/profile-129802.yaml
+failureConditions:
+  severityThresholds:
+    any: 0
+
