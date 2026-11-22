@@ -8,6 +8,9 @@ import java.util.*;
 
 public class Game implements IGame
 {
+
+	public static final String SINGLE_LETTER_PATTERN = "[A-Za-z]";
+
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
 	 * shots, and other game elements onto the console. The method also optionally
@@ -295,7 +298,7 @@ public class Game implements IGame
 			// Lê a próxima parte e constrói uma posição
 			String token = inputScanner.next();
 
-			if (token.matches("[A-Za-z]")) {
+			if (token.matches(SINGLE_LETTER_PATTERN)) {
 				// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
 				if (inputScanner.hasNextInt()) {
 					int row = inputScanner.nextInt();
