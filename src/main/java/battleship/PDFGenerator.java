@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class PDFGenerator {
 
+    private static final String NOME_FICHEIRO = "relatorio_batalha.pdf";
+
     // Metodo que recebe as estatísticas do jogo e gera o PDF
     public static void criarRelatorioBatalha(int totalTiros, int naviosAfundados) {
 
@@ -22,7 +24,7 @@ public class PDFGenerator {
             escreverConteudo(totalTiros, naviosAfundados, document, page);
 
             // 3. Guarda o ficheiro na pasta do projeto
-            document.save("relatorio_batalha.pdf");
+            document.save(NOME_FICHEIRO);
             System.out.println("-> Ficheiro PDF gerado com sucesso: relatorio_batalha.pdf");
 
         } catch (IOException e) {
