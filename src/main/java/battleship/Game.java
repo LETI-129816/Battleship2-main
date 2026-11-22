@@ -8,6 +8,9 @@ import java.util.*;
 
 public class Game implements IGame
 {
+
+	public static final String SINGLE_LETTER_PATTERN = "[A-Za-z]";
+
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
 	 * shots, and other game elements onto the console. The method also optionally
@@ -41,11 +44,15 @@ public class Game implements IGame
 		printBoardFrame(map);
 
 		if (showLegend) {
-			System.out.println("          LEGENDA");
-			System.out.println("'" + SHIP_MARKER + "'->navio, '" + SHIP_ADJACENT_MARKER + "'->adjacente a navio, '" + EMPTY_MARKER + "'->água");
-			System.out.println("'" + SHOT_SHIP_MARKER + "'->Tiro certeiro, '" + SHOT_WATER_MARKER + "'->Tiro na água");
+			printLegend();
 		}
 		System.out.println();
+	}
+
+	private static void printLegend() {
+		System.out.println("          LEGENDA");
+		System.out.println("'" + SHIP_MARKER + "'->navio, '" + SHIP_ADJACENT_MARKER + "'->adjacente a navio, '" + EMPTY_MARKER + "'->água");
+		System.out.println("'" + SHOT_SHIP_MARKER + "'->Tiro certeiro, '" + SHOT_WATER_MARKER + "'->Tiro na água");
 	}
 
 	private static void printShips(IFleet fleet, char[][] map) {
@@ -66,7 +73,8 @@ public class Game implements IGame
 					int col = shot.getColumn();
 					if (map[row][col] == SHIP_MARKER)
 						map[row][col] = SHOT_SHIP_MARKER;
-					if (map[row][col] == EMPTY_MARKER || map[row][col] == SHIP_ADJACENT_MARKER)
+					boolean isWaterOrAdjacent = map[row][col] == EMPTY_MARKER || map[row][col] == SHIP_ADJACENT_MARKER;
+					if (isWaterOrAdjacent)
 						map[row][col] = SHOT_WATER_MARKER;
 				}
 			}
@@ -295,7 +303,7 @@ public class Game implements IGame
 			// Lê a próxima parte e constrói uma posição
 			String token = inputScanner.next();
 
-			if (token.matches("[A-Za-z]")) {
+			if (token.matches(SINGLE_LETTER_PATTERN)) {
 				// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
 				if (inputScanner.hasNextInt()) {
 					int row = inputScanner.nextInt();
@@ -340,10 +348,10 @@ public class Game implements IGame
 			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
 		}
 
-		List<IPosition> alreadyShot = new ArrayList<IPosition>();
+		List<IPosition> shotsInCurrentMove = new ArrayList<IPosition>();
 		for (IPosition pos : shots) {
-			shotResults.add(fireSingleShot(pos, alreadyShot.contains(pos)));
-			alreadyShot.add(pos);
+			shotResults.add(fireSingleShot(pos, shotsInCurrentMove.contains(pos)));
+			shotsInCurrentMove.add(pos);
 		}
 
 		Move move = new Move(moveNumber, shots, shotResults);
@@ -422,8 +430,7 @@ public class Game implements IGame
 	@Override
 	public int getRemainingShips()
 	{
-		List<IShip> floatingShips = myFleet.getFloatingShips();
-		return floatingShips.size();
+        return myFleet.getFloatingShips().size();
 	}
 
 	public boolean repeatedShot(IPosition pos)
