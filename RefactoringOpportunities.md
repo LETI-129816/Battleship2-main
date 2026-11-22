@@ -15,3 +15,8 @@
 | PDFGenerator::escreverConteudo (expressão `new PDType1Font(HELVETICA)` repetida) | Duplicated Code | Introduce Variable | 129771 |
 | Move::processEnemyFire (variável `output`) | Nome pouco descritivo | Rename | 129771 |
 | Move::processEnemyFire (ObjectMapper criado em cada chamada) | Objeto recriado a cada execução | Introduce Field | 129771 |
+| Game::fireShots (alreadyShot) | Nome pouco descritivo | Rename | 129802 |
+| Game::getRemainingShips (floatingShips) | Variável temporária redundante | Inline Variable | 129802 |
+| Game::readEnemyFire ("[A-Za-z]") | Literal sem nome explicativo | Introduce Constant | 129802 |
+| Game::printBoardShots (condição de água ou posição adjacente) | Expressão condicional complexa | Introduce Variable | 129802 |
+| Game::printBoard (impressão da legenda) | Método com várias responsabilidades | Extract Method | 129802 |
