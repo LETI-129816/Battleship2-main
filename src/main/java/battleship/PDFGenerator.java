@@ -44,13 +44,14 @@ public class PDFGenerator {
 
             // Estatísticas
             contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+            PDType1Font fonteNormal = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+            contentStream.setFont(fonteNormal, 12);
             contentStream.newLineAtOffset(50, 650);
             contentStream.showText("Total de Tiros Disparados: " + totalTiros);
             contentStream.endText();
 
             contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+            contentStream.setFont(fonteNormal, 12);
             contentStream.newLineAtOffset(50, 630);
             contentStream.showText("Navios Afundados: " + naviosAfundados);
             contentStream.endText();
