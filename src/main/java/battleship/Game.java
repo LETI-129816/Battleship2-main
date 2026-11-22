@@ -340,10 +340,10 @@ public class Game implements IGame
 			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
 		}
 
-		List<IPosition> alreadyShot = new ArrayList<IPosition>();
+		List<IPosition> shotsInCurrentMove = new ArrayList<IPosition>();
 		for (IPosition pos : shots) {
-			shotResults.add(fireSingleShot(pos, alreadyShot.contains(pos)));
-			alreadyShot.add(pos);
+			shotResults.add(fireSingleShot(pos, shotsInCurrentMove.contains(pos)));
+			shotsInCurrentMove.add(pos);
 		}
 
 		Move move = new Move(moveNumber, shots, shotResults);
