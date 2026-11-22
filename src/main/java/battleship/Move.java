@@ -100,13 +100,13 @@ public class Move implements IMove {
 
 		if (verbose) {
 			// Construção da mensagem de saída
-			StringBuilder output = new StringBuilder();
+			StringBuilder resumo = new StringBuilder();
 
 			if (validShots == 0 && repeatedShots > 0) {
-				output.append(repeatedShots).append(" tiro").append(repeatedShots > 1 ? "s" : "").append(" repetido").append(repeatedShots > 1 ? "s" : "");
+				resumo.append(repeatedShots).append(" tiro").append(repeatedShots > 1 ? "s" : "").append(" repetido").append(repeatedShots > 1 ? "s" : "");
 			} else {
 				if (validShots > 0) {
-					output.append(validShots).append(" tiro").append(validShots > 1 ? "s" : "").append(" válido").append(validShots > 1 ? "s" : "").append(": ");
+					resumo.append(validShots).append(" tiro").append(validShots > 1 ? "s" : "").append(" válido").append(validShots > 1 ? "s" : "").append(": ");
 				}
 
 				// Atualizar lógica para contar múltiplos barcos afundados do mesmo tipo
@@ -114,7 +114,7 @@ public class Move implements IMove {
 					for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
 						String boatName = entry.getKey();
 						int count = entry.getValue();
-						output.append(count).append(" ").append(boatName).append(count > 1 ? "s" : "").append(" ao fundo").append(" + ");
+						resumo.append(count).append(" ").append(boatName).append(count > 1 ? "s" : "").append(" ao fundo").append(" + ");
 					}
 				}
 
@@ -123,35 +123,35 @@ public class Move implements IMove {
 						String boatName = entry.getKey();
 						int hits = entry.getValue();
 						if (!sunkBoatsCount.containsKey(boatName)) {
-							output.append(hits).append(" tiro").append(hits > 1 ? "s" : "").append(" num(a) ").append(boatName).append(" + ");
+							resumo.append(hits).append(" tiro").append(hits > 1 ? "s" : "").append(" num(a) ").append(boatName).append(" + ");
 						}
 					}
 				}
 
 				if (missedShots > 0) {
-					output.append(missedShots).append(" tiro").append(missedShots > 1 ? "s" : "").append(" na água");
+					resumo.append(missedShots).append(" tiro").append(missedShots > 1 ? "s" : "").append(" na água");
 				} else if (!sunkBoatsCount.isEmpty() || !hitsPerBoat.isEmpty()) {
-					output.setLength(output.length() - 2); // Remover o "+" final
+					resumo.setLength(resumo.length() - 2); // Remover o "+" final
 				}
 
 				if (repeatedShots > 0) {
 					if (validShots > 0) {
-						output.append(", ");
+						resumo.append(", ");
 					}
-					output.append(repeatedShots).append(" tiro").append(repeatedShots > 1 ? "s" : "").append(" repetido").append(repeatedShots > 1 ? "s" : "");
+					resumo.append(repeatedShots).append(" tiro").append(repeatedShots > 1 ? "s" : "").append(" repetido").append(repeatedShots > 1 ? "s" : "");
 				}
 			}
 
 			// Adicionar contagem de tiros fora do tabuleiro
 			if (outsideShots > 0) {
-				if (!output.isEmpty()) {
-					output.append(", ");
+				if (!resumo.isEmpty()) {
+					resumo.append(", ");
 				}
-				output.append(outsideShots).append(" tiro").append(outsideShots > 1 ? "s" : "").append(" exterior").append(outsideShots > 1 ? "es" : "");
+				resumo.append(outsideShots).append(" tiro").append(outsideShots > 1 ? "s" : "").append(" exterior").append(outsideShots > 1 ? "es" : "");
 			}
 
 			// Imprimir na consola se verbose for true
-			System.out.println("Jogada nº" + this.number + " -> " + output);
+			System.out.println("Jogada nº" + this.number + " -> " + resumo);
 		}
 
 		// Criar o mapa para o JSON
