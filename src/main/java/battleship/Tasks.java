@@ -46,6 +46,7 @@ public class Tasks {
 
 	private static final String GUARDAR = "guardar";
 	private static final String CARREGAR = "carregar";
+	private static final String TIPO_NAVIO_EXATO = "tipo_navio_exato";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -57,8 +58,8 @@ public class Tasks {
 		menuHelp();
 
 		System.out.print("> ");
-		Scanner in = new Scanner(System.in);
-		String command = in.next();
+		Scanner scanner = new Scanner(System.in);
+		String command = scanner.next();
 		while (!command.equals(DESISTIR)) {
 
 			switch (command) {
@@ -68,7 +69,7 @@ public class Tasks {
 					game.printMyBoard(false, true);
 					break;
 				case LEFROTA:
-					myFleet = buildFleet(in);
+					myFleet = buildFleet(scanner);
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
 					break;
@@ -82,15 +83,12 @@ public class Tasks {
 					break;
 				case RAJADA:
 					if (game != null) {
-						game.readEnemyFire(in);
+						game.readEnemyFire(scanner);
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
-							game.over();
-							int naviosAfundados = Fleet.FLEET_SIZE;
-							PDFGenerator.criarRelatorioBatalha(99, naviosAfundados);
-							System.exit(0);
+							terminarJogo(game);
 						}
 					}
 					break;
@@ -108,10 +106,7 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
-							game.over();
-							int naviosAfundados = Fleet.FLEET_SIZE;
-							PDFGenerator.criarRelatorioBatalha(99, naviosAfundados);
-							System.exit(0);
+							terminarJogo(game);
 						}
 					}
 					break;
@@ -120,63 +115,15 @@ public class Tasks {
 						game.printMyBoard(true, true);
 					break;
 				case GUARDAR:
-					if (game != null) {
-						System.out.print("Que nome quer dar a esta gravação? (ex: meu_jogo): ");
-						String nomeFicheiroGuardar = in.next() + ".json";
-
-						try (Writer writer = new FileWriter(nomeFicheiroGuardar)) {
-							Gson gson = new GsonBuilder()
-									.setPrettyPrinting()
-									// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
-									.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
-										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
-										json.addProperty("tipo_navio_exato", src.getClass().getName());
-										return json;
-									})
-									.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
-										JsonObject json = context.serialize(src, src.getClass()).getAsJsonObject();
-										json.addProperty("tipo_navio_exato", src.getClass().getName());
-										return json;
-									})
-									.create();
-
-							gson.toJson(game, writer);
-							System.out.println("✓ Jogo guardado com sucesso no ficheiro '" + nomeFicheiroGuardar + "'!");
-						} catch (IOException e) {
-							System.out.println("Erro ao guardar o jogo: " + e.getMessage());
-						}
-					} else {
-						System.out.println("Não existe nenhum jogo a decorrer. Use '" + GERAFROTA + "' primeiro.");
-					}
+					guardarJogo(game, scanner);
 					break;
 
 				case CARREGAR:
 					System.out.print("Qual é o nome do ficheiro que quer carregar? (sem o .json): ");
-					String nomeFicheiroCarregar = in.next() + ".json";
+					String nomeFicheiroCarregar = scanner.next() + ".json";
 
 					try (Reader reader = new FileReader(nomeFicheiroCarregar)) {
-						Gson gson = new GsonBuilder()
-								.registerTypeAdapter(IFleet.class, (JsonDeserializer<IFleet>) (json, type, context) -> context.deserialize(json, Fleet.class))
-								.registerTypeAdapter(IPosition.class, (JsonDeserializer<IPosition>) (json, type, context) -> context.deserialize(json, Position.class))
-								.registerTypeAdapter(IMove.class, (JsonDeserializer<IMove>) (json, type, context) -> context.deserialize(json, Move.class))
-								// Ensina o Gson a ler a "etiqueta" e a construir o navio exato (Barca, Galeão, etc.)
-								.registerTypeAdapter(Ship.class, (JsonDeserializer<Ship>) (json, type, context) -> {
-									try {
-										String className = json.getAsJsonObject().get("tipo_navio_exato").getAsString();
-										return context.deserialize(json, Class.forName(className));
-									} catch (Exception ex) {
-										throw new JsonParseException(ex);
-									}
-								})
-								.registerTypeAdapter(IShip.class, (JsonDeserializer<IShip>) (json, type, context) -> {
-									try {
-										String className = json.getAsJsonObject().get("tipo_navio_exato").getAsString();
-										return context.deserialize(json, Class.forName(className));
-									} catch (Exception ex) {
-										throw new JsonParseException(ex);
-									}
-								})
-								.create();
+						Gson gson = criarGsonParaCarregar();
 
 						game = gson.fromJson(reader, Game.class);
 						myFleet = game.getMyFleet();
@@ -199,9 +146,74 @@ public class Tasks {
 					System.out.println("Que comando é esse??? Repete ...");
 			}
 			System.out.print("> ");
-			command = in.next();
+			command = scanner.next();
 		}
 		System.out.println(GOODBYE_MESSAGE);
+	}
+
+	private static @NotNull Gson criarGsonParaCarregar() {
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(IFleet.class, (JsonDeserializer<IFleet>) (json, type, context) -> context.deserialize(json, Fleet.class))
+				.registerTypeAdapter(IPosition.class, (JsonDeserializer<IPosition>) (json, type, context) -> context.deserialize(json, Position.class))
+				.registerTypeAdapter(IMove.class, (JsonDeserializer<IMove>) (json, type, context) -> context.deserialize(json, Move.class))
+				// Ensina o Gson a ler a "etiqueta" e a construir o navio exato (Barca, Galeão, etc.)
+				.registerTypeAdapter(Ship.class, (JsonDeserializer<Ship>) (json, type, context) -> {
+					try {
+						String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
+						return context.deserialize(json, Class.forName(className));
+					} catch (Exception ex) {
+						throw new JsonParseException(ex);
+					}
+				})
+				.registerTypeAdapter(IShip.class, (JsonDeserializer<IShip>) (json, type, context) -> {
+					try {
+						String className = json.getAsJsonObject().get(TIPO_NAVIO_EXATO).getAsString();
+						return context.deserialize(json, Class.forName(className));
+					} catch (Exception ex) {
+						throw new JsonParseException(ex);
+					}
+				})
+				.create();
+		return gson;
+	}
+
+	private static void guardarJogo(IGame game, Scanner scanner) {
+		if (game != null) {
+			System.out.print("Que nome quer dar a esta gravação? (ex: meu_jogo): ");
+			String nomeFicheiroGuardar = scanner.next() + ".json";
+
+			try (Writer writer = new FileWriter(nomeFicheiroGuardar)) {
+				Gson gson = new GsonBuilder()
+						.setPrettyPrinting()
+						// Ensina o Gson a escrever a "etiqueta" da classe exata quando guarda um Navio
+						.registerTypeAdapter(Ship.class, (JsonSerializer<Ship>) (src, type, context) -> {
+							Class<? extends Ship> classeDoNavio = src.getClass();
+							JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
+							json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
+							return json;
+						})
+						.registerTypeAdapter(IShip.class, (JsonSerializer<IShip>) (src, type, context) -> {
+							Class<? extends IShip> classeDoNavio = src.getClass();
+							JsonObject json = context.serialize(src, classeDoNavio).getAsJsonObject();
+							json.addProperty(TIPO_NAVIO_EXATO, classeDoNavio.getName());
+							return json;
+						})
+						.create();
+
+				gson.toJson(game, writer);
+				System.out.println("✓ Jogo guardado com sucesso no ficheiro '" + nomeFicheiroGuardar + "'!");
+			} catch (IOException e) {
+				System.out.println("Erro ao guardar o jogo: " + e.getMessage());
+			}
+		} else {
+			System.out.println("Não existe nenhum jogo a decorrer. Use '" + GERAFROTA + "' primeiro.");
+		}
+	}
+
+	private static void terminarJogo(IGame game) {
+		game.over();
+		PDFGenerator.criarRelatorioBatalha(99, Fleet.FLEET_SIZE);
+		System.exit(0);
 	}
 
 	/**
@@ -320,10 +332,6 @@ public class Tasks {
 		} else {
 			throw new IllegalArgumentException("Formato inválido. Use 'A3', 'A 3' ou similar.");
 		}
-	}
-
-	public void metodoComCheiro(int p1, String p2) {
-		System.out.println("parameters:" + p1 + p2);
 	}
 
 }
