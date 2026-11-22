@@ -19,12 +19,14 @@ public class Move implements IMove {
 	private final int number;
 	private final List<IPosition> shots;
 	private final List<IGame.ShotResult> shotResults;
+	private final ObjectMapper objectMapper;
 
 	//-------------------------------------------------------------------
 	public Move(int moveNumber, List<IPosition> moveShots, List<IGame.ShotResult> moveResults) {
 		this.number = moveNumber;
 		this.shots = moveShots;
 		this.shotResults = moveResults;
+		objectMapper = new ObjectMapper();
 	}
 
 	@Override
@@ -187,7 +189,6 @@ public class Move implements IMove {
 		String jsonString;
 
 		// Serializar os tiros gerados em JSON usando a biblioteca Jackson
-		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		try {
