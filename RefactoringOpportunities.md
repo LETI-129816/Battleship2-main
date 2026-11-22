@@ -10,3 +10,8 @@
 | Tasks::menu (construção do Gson em CARREGAR) | Long Method | Extract Method | 129816 |
 | Tasks::metodoComCheiro | Speculative Generality (código sem uso) | Safe Delete | 129816 |
 | Tasks::menu (variável `in`) | Nome pouco descritivo | Rename | 129816 |
+| PDFGenerator::criarRelatorioBatalha (bloco try do PDPageContentStream) | Long Method | Extract Method | 129771 |
+| PDFGenerator::criarRelatorioBatalha (literal "relatorio_batalha.pdf") | Duplicated Code (literal repetido) | Introduce Constant | 129771 |
+| PDFGenerator::escreverConteudo (expressão `new PDType1Font(HELVETICA)` repetida) | Duplicated Code | Introduce Variable | 129771 |
+| Move::processEnemyFire (variável `output`) | Nome pouco descritivo | Rename | 129771 |
+| Move::processEnemyFire (ObjectMapper criado em cada chamada) | Objeto recriado a cada execução | Introduce Field | 129771 |

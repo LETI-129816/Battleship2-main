@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class PDFGenerator {
 
+    private static final String NOME_FICHEIRO = "relatorio_batalha.pdf";
+
     // Metodo que recebe as estatísticas do jogo e gera o PDF
     public static void criarRelatorioBatalha(int totalTiros, int naviosAfundados) {
 
@@ -19,35 +21,40 @@ public class PDFGenerator {
             document.addPage(page);
 
             // 2. Prepara a "caneta" para escrever no documento
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-
-                // Título
-                contentStream.beginText();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18);
-                contentStream.newLineAtOffset(50, 700); // Posição (X, Y) na página
-                contentStream.showText("Relatório Tático - Batalha Naval");
-                contentStream.endText();
-
-                // Estatísticas
-                contentStream.beginText();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                contentStream.newLineAtOffset(50, 650);
-                contentStream.showText("Total de Tiros Disparados: " + totalTiros);
-                contentStream.endText();
-
-                contentStream.beginText();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                contentStream.newLineAtOffset(50, 630);
-                contentStream.showText("Navios Afundados: " + naviosAfundados);
-                contentStream.endText();
-            }
+            escreverConteudo(totalTiros, naviosAfundados, document, page);
 
             // 3. Guarda o ficheiro na pasta do projeto
-            document.save("relatorio_batalha.pdf");
+            document.save(NOME_FICHEIRO);
             System.out.println("-> Ficheiro PDF gerado com sucesso: relatorio_batalha.pdf");
 
         } catch (IOException e) {
             System.out.println("Ocorreu um erro ao gerar o ficheiro PDF: " + e.getMessage());
+        }
+    }
+
+    private static void escreverConteudo(int totalTiros, int naviosAfundados, PDDocument document, PDPage page) throws IOException {
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+
+            // Título
+            contentStream.beginText();
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18);
+            contentStream.newLineAtOffset(50, 700); // Posição (X, Y) na página
+            contentStream.showText("Relatório Tático - Batalha Naval");
+            contentStream.endText();
+
+            // Estatísticas
+            contentStream.beginText();
+            PDType1Font fonteNormal = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+            contentStream.setFont(fonteNormal, 12);
+            contentStream.newLineAtOffset(50, 650);
+            contentStream.showText("Total de Tiros Disparados: " + totalTiros);
+            contentStream.endText();
+
+            contentStream.beginText();
+            contentStream.setFont(fonteNormal, 12);
+            contentStream.newLineAtOffset(50, 630);
+            contentStream.showText("Navios Afundados: " + naviosAfundados);
+            contentStream.endText();
         }
     }
 }
