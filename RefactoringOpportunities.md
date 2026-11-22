@@ -15,4 +15,3 @@
 | PDFGenerator::escreverConteudo (expressão `new PDType1Font(HELVETICA)` repetida) | Duplicated Code | Introduce Variable | 129771 |
 | Move::processEnemyFire (variável `output`) | Nome pouco descritivo | Rename | 129771 |
 | Move::processEnemyFire (ObjectMapper criado em cada chamada) | Objeto recriado a cada execução | Introduce Field | 129771 |
-| PDFGenerator::escreverConteudo (ordem dos parâmetros) | Long Parameter List | Change Signature | 129771 |
